@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinnisvara Haldus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: #ffffff;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .btn-custom {
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Kinnisvara Haldus</h1>
+        <div class="d-flex justify-content-center mb-4">
+            <a href="{% url 'transaction_query' %}" class="btn btn-primary mx-2 btn-custom">Otsi</a>
+            <a href="{% url 'login' %}" class="btn btn-secondary mx-2 btn-custom">Logi Sisse</a>
+        </div>
+
+        <div class="row">
+            <!-- Andmebaasi Ülevaade -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Andmebaasi Ülevaade</div>
+                    <div class="card-body">
+                        <p class="stat-value">{{ tables|length }} Tabelit</p>
+                        <ul class="list-group">
+                            {% for table, count in tables.items %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ table }} 
+                                    <span class="badge bg-primary rounded-pill">{{ count }} rida</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kinnisvara Hinnad -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Kinnisvara Hinnad</div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <p class="stat-label">Kalleim:</p>
+                            <p class="stat-value">{{ kinnisvara_prices.max_price|default:"N/A" }} €</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="stat-label">Keskmine Hind:</p>
+                            <p class="stat-value">{{ kinnisvara_prices.avg_price|default:"N/A" | floatformat:2 }} €</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="stat-label">Odavaim:</p>
+                            <p class="stat-value">{{ kinnisvara_prices.min_price|default:"N/A" }} €</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parim Maakler -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Parim Maakler</div>
+                    <div class="card-body">
+                        {% if top_maakler %}
+                            <p class="stat-value">{{ top_maakler.eesnimi }} {{ top_maakler.perekonnanimi }}</p>
+                            <p class="stat-label">Tehinguid: {{ top_maakler.tehing_count }}</p>
+                        {% else %}
+                            <p class="text-muted">Maaklerid puuduvad.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linn, kus on enim Tehinguid -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Linn, kus on enim Tehinguid</div>
+                    <div class="card-body">
+                        {% if top_city %}
+                            <p class="stat-value">{{ top_city.nimi }}</p>
+                            <p class="stat-label">Tehinguid: {{ top_city.tehing_count }}</p>
+                        {% else %}
+                            <p class="text-muted">Linnad puuduvad.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tehingud Aastate Kaupa -->
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">Tehingud Aastate Kaupa</div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Aasta</th>
+                                    <th>Tehingute Arv</th>
+                                    <th>Keskmine ruutmeetri hind</th>
+                                    <th>Keskmine hind kinnisvara tüübi järgi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for year, data in tehingud_by_year %}
+                                    <tr>
+                                        <td>{{ year }}</td>
+                                        <td>{{ data.total_transactions }}</td>
+                                        <td>{{ data.avg_ruutmeetrihind|floatformat:2 }} €/m²</td>
+                                        <td>
+                                            <ul>
+                                                {% for kinnisvara_tüüp, avg_price in data.avg_prices_by_type.items %}
+                                                    <li>{{ kinnisvara_tüüp }}: {{ avg_price|floatformat:2 }} €</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">Tehinguid ei leitud.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
