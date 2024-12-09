@@ -13,8 +13,11 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count, Max, Min, Avg
 from collections import defaultdict
+from django.views.decorators.cache import cache_page
 
+cache_time = 60 * 10 #10 minutes
 
+@cache_page(cache_time)
 def index(request):
     # Get table information
     tables = {
@@ -84,8 +87,9 @@ class TableSelectionView(LoginRequiredMixin, View):
 
     def get(self, request):
         return render(request, self.template_name)
+    
 
-
+@method_decorator(cache_page(cache_time), name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
 class ManageModelView(LoginRequiredMixin, View):
     template_name = 'manage_model.html'
@@ -97,6 +101,7 @@ class ManageModelView(LoginRequiredMixin, View):
     def get(self, request):
         search_query = request.GET.get('search', '')
         objects = self.model_class.objects.all()
+        
 
         if search_query:
             # Dynamic search logic as in the previous example
@@ -162,7 +167,7 @@ class ManageModelView(LoginRequiredMixin, View):
 
         return redirect(request.path)
 
-
+@method_decorator(cache_page(cache_time), name='dispatch')
 class TransactionQueryView(View):
     template_name = 'transaction_query.html'
 

@@ -92,6 +92,17 @@ DATABASES = {
     }
 }
 
+#CACHE using Redis NoSql server
+# Start Redis server manually: sudo redis-server /etc/redis/redis.conf
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/0',  # Replace with your Redis server details
+        # 'OPTIONS': {
+        #     'CLIENT_CLASS': 'django_redis.client.DefaultClient',  # Optional but recommended
+        # }
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
