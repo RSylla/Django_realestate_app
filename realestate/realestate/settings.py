@@ -97,10 +97,8 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/0',  # Replace with your Redis server details
-        # 'OPTIONS': {
-        #     'CLIENT_CLASS': 'django_redis.client.DefaultClient',  # Optional but recommended
-        # }
+        'LOCATION': 'redis://127.0.0.1:6379/0',
+        
     }
 }
 
