@@ -7,6 +7,8 @@ Lähteülesanne.docx - Esialgne plaan ja idee kuidas võiks projekti üles ehita
 
 Dokumentatsioon ja kokkuvõte.docx - Valminud projekti kirjeldus, ülesehitus, kasutatud tehnoloogia, põhilised õppetunnid ja saadud kogemus.
 
+Projekti esitlus - Kinnisvara statistika.pptx - Powerpoint esitlus projekti tutvustamiseks.
+
 realestate_db_backup.sql - Iseenesest mõistetav, andmebaasi koopia (binary).
 
 realestate_db_ERD.png - Entity Relational Diagram tabelite ja seoste visualiseerimiseks.
