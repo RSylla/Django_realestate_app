@@ -13,6 +13,6 @@ realestate_db_backup.sql - Iseenesest mõistetav, andmebaasi koopia (binary).
 
 realestate_db_ERD.png - Entity Relational Diagram tabelite ja seoste visualiseerimiseks.
 
-Redis_snapshot_backup.json - Sanpshot of Redis NoSQL db which is used as cache storage.
+redis_export_snapshot.txt - Sanpshot of Redis NoSQL db which is used as cache storage.
 
 requirements.txt - Kasutatud python moodulite loetelu vajadusel kiirinstalleerimiseks.
