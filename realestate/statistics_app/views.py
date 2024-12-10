@@ -15,7 +15,7 @@ from django.db.models import Count, Max, Min, Avg
 from collections import defaultdict
 from django.views.decorators.cache import cache_page
 
-cache_time = 60 * 10 #10 minutes
+cache_time = 60 * 60 #60 minutes
 
 @cache_page(cache_time)
 def index(request):
